@@ -1,0 +1,49 @@
+name: Build Release
+on:
+  push:
+    tags:
+      - "**"
+jobs:
+  helm:
+    name: helm release
+    runs-on: ubuntu-latest
+    env:
+      SAMO_DOCKER_REGISTRY: ghcr.io
+      SAMO_DOCKER_RELEASE_REGISTRY: ghcr.io
+      SAMO_HELM_SOURCE_DIR: src/main/helm
+      SAMO_HELM_SOURCE_COPY: false
+      SAMO_HELM_REGISTRY: oci://ghcr.io/${{ github.repository_owner }}/charts
+      SAMO_HELM_DIR: target/helm
+      SAMO_HELM_CHART_TEMPLATE_LIST: version={{ .Version }},appVersion={{ .Version }},name={{ .Name }}
+      SAMO_HELM_VALUES_TEMPLATE_LIST: app.image.registry=ghcr.io,app.image.tag={{ .Version }},app.image.repository=${{ github.repository_owner }}/{{ .Name }}
+      SAMO_HELM_VALUES_RELEASE_TEMPLATE_LIST: app.image.registry=ghcr.io,app.image.tag={{ .Release }},app.image.repository=${{ github.repository_owner }}/{{ .Name }}
+      SAMO_HELM_CHART_RELEASE_TEMPLATE_LIST: version={{ .Release }},appVersion={{ .Release }},name={{ .Name }}
+      SAMO_CONVENTIONAL_COMMITS: 'true'
+      SAMO_HELM_ADD_REPO_DEPS: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+      - uses: lorislab/install-samo-action@v2
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.SAMO_DOCKER_REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: helm release
+        run: samo project helm release -v debug
+  changelog:
+    name: generate changelog
+    runs-on: ubuntu-latest
+    needs: helm
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref_name }}
+      - uses: lorislab/install-changelog-action@v1
+      - name: Create changelog
+        run: changelog generate --create-release --close-version --file .github/changelog.yaml
+        env:
+          CHANGELOG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
