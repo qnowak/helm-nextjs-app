@@ -14,7 +14,7 @@ jobs:
       SAMO_HELM_DIR: .
       SAMO_HELM_SOURCE_DIR: .
       SAMO_HELM_SOURCE_COPY: false
-      SAMO_HELM_REGISTRY: oci://ghcr.io/${{ github.repository_owner }}/charts
+      SAMO_HELM_REGISTRY: oci://ghcr.io/${{ github.repository_owner }}/helm-nextjs-app/charts
       SAMO_DOCKER_REGISTRY: ghcr.io
       SAMO_DOCKER_RELEASE_REGISTRY: ghcr.io
       SAMO_CONVENTIONAL_COMMITS: 'true'
