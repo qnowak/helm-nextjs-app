@@ -1,7 +1,5 @@
 # Helm template for Next.js application
 
-## Description
-
 This Helm chart allows you to easily deploy a Next.js application on Kubernetes with full support for routing, health probes, and environment configuration. It is designed for flexibility and production-readiness, leveraging best practices from the Kubernetes and Helm ecosystem.
 
 ---
