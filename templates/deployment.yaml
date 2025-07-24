@@ -64,8 +64,7 @@ spec:
           {{- $envVals := .Values.global.env -}}
           {{ if .Values.routing.enabled }}
           {{ if .Values.routing.path }}
-          {{- $appBaseHref := dict "APP_BASE_HREF" .Values.routing.path -}}
-          {{- $appBaseHref := dict "NEXT_PUBLIC_APP_BASE_HREF" .Values.routing.path -}}
+          {{- $appBaseHref := dict "APP_BASE_HREF" .Values.routing.path "NEXT_PUBLIC_APP_BASE_HREF" .Values.routing.path -}}
           {{- $envVals = merge $appBaseHref $envVals -}}
           {{ end }}
           {{ end }}
